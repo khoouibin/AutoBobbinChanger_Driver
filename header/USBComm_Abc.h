@@ -66,6 +66,7 @@ enum Protocol_Command
 	Cmd_Z_PulseGen = 0x06,
 	Cmd_X_PulseGen = 0x07,
 	Cmd_ControlModeSwitch = 0x10,
+	Cmd_HomeParts = 0x11,
 	Cmd_MAX,
 };
 
@@ -80,6 +81,7 @@ enum Protocol_PositiveResponse
 	RespPositive_Z_PulseGen = 0x46,
 	RespPositive_X_PulseGen = 0x47,
 	RespPositive_ControlModeSwitch = 0x50,
+	RespPositive_HomeParts = 0x51,
 };
 
 enum Protocol_NegativeResponse
@@ -170,6 +172,24 @@ enum ControlModeSwitch_SubFunc
 	SubFunc_controlmode_home = 2,
 	SubFunc_controlmode_diagnosis = 3,
 	SubFunc_controlmode_max,
+};
+
+enum HomeParts_SubFunc
+{
+	SubFunc_home_WinderStepper = 0,
+	SubFunc_home_LECPA_30 = 1,
+	SubFunc_home_LECPA_100 = 2,
+	SubFunc_home_WinderStepper_polling_reply = 10,
+	SubFunc_home_LECPA_30_polling_reply = 11,
+	SubFunc_home_LECPA_100_polling_reply = 12,
+	SubFunc_home_max,
+};
+
+enum HomeParts_SubCmd
+{
+	SubCmd_Abort = 0,
+	SubCmd_Start = 1,
+	SubCmd_max,
 };
 
 enum Reponse_Code
@@ -571,6 +591,28 @@ typedef struct
 	Poco::Event control_mode_switch_fbk_wake;
 } usb_msg_control_mode_switch_fbk_t;
 
+typedef struct
+{
+	unsigned char cmd_id;
+	unsigned char sub_func;
+	unsigned char sub_cmd;
+	unsigned char argv_1;
+} usb_msg_home_parts_t;
+
+typedef struct
+{
+	unsigned char cmd_id_rep;
+	unsigned char sub_func;
+	unsigned char home_routine;
+	unsigned char home_state;
+} usb_msg_home_parts_reply_t;
+
+typedef struct
+{
+	usb_msg_home_parts_reply_t home_parts_fbk;
+	Poco::Event home_parts_fbk_wake;
+} usb_msg_home_parts_fbk_t;
+
 // should be create a profile.h to collect below.
 typedef struct
 {
@@ -651,5 +693,6 @@ int usb_message_set_z_pulse_gen(int z_rpm);
 int usb_message_set_x_pulse_gen(int pulse_mode,int spr, int steps, int max_rpm);
 
 int usb_message_control_mode_switch(int rtc_control_mode);
+int usb_message_home_LECPA_30(int home_action);
 
 #endif

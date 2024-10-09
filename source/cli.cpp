@@ -405,6 +405,25 @@ void CommandLineInterface()
                 }
             }
         }
+        else if (cmd == "l30")
+        {
+            if (v.size() >= 2)
+            {
+                try
+                {
+                    int home_act = std::stoi(v[1]);
+                    usb_message_home_LECPA_30(home_act);
+                }
+                catch (const std::exception &e)
+                {
+                    std::cout << "echo message, exception:" << e.what() << '\n';
+                }
+            }
+            else
+            {
+                cout << "unsupported command:" << command_line << endl;
+            }
+        }
         else if (cmd == "tcp")
         {
             int res;
